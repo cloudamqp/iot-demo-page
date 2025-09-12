@@ -1,14 +1,14 @@
 import paho.mqtt.client as mqtt
 
-BROKER = "campbell.lmq.cloudamqp.com"
+BROKER = "<host-name>"
 PORT = 1883  # use 8883 + TLS block if your instance requires TLS
 
-TOPICT = "lavinmq/home/temperature"
-TOPICH = "lavinmq/home/humidity"
+TOPICT = " "
+TOPICH = " "
 
 # IMPORTANT: vhost goes after @ in the username (RabbitMQ/LavinMQ)
-USERNAME = "fiaetnku:fiaetnku"      # change vhost if needed
-PASSWORD = "QPy2MIeamwXqw9lh768eg0ZG5E2ZYoPr"
+USERNAME = "<vhost:username>"      # change vhost if needed
+PASSWORD = "<password>"
 
 def on_connect(client, userdata, flags, reason_code, properties=None):
     if reason_code == 0:
