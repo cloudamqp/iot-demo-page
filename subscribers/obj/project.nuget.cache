@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "9xuZEUILg74=",
+  "success": true,
+  "projectFilePath": "/Users/hailaygebremeskel/IoT_Project/iot-demo-page/subscribers/subscribers.csproj",
+  "expectedPackageFiles": [
+    "/Users/hailaygebremeskel/.nuget/packages/mqttnet/4.3.6.1152/mqttnet.4.3.6.1152.nupkg.sha512"
+  ],
+  "logs": []
+}

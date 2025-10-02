@@ -13,19 +13,17 @@ It contains two main parts:
 Iot-demo-page/
 ├── arduino/ # Arduino sketches (C/C++ code for IoT device)
 ├── landingpage/ # Landing page (Bootstrap, CSS, JS, HTML)
-├── MQTT_subscriber.py # MQTT subscriber script (Python)
+├── subscribers # MQTT subscribers in different language
 └── README.md # Project documentation
 
-### Languages
-- C
-- C++
-- CSS
-- JavaScript
-- HTML
+### consumers
 - Python
+- C#
+- JS
+- Ruby
 
 ### Hardware
-- Arduino board
+- ESP32-c6 microcontroler
 - DHT temperature & humidity sensor
 - USB-C cable
 - Jumper wires (red = power, black = ground, yellow = data)
@@ -33,6 +31,9 @@ Iot-demo-page/
 ### Software
 - Arduino IDE
 - Python 3.x
+- Node js
+- .Net
+- ruby
 
 ##  Step 1: Setup the IoT Device
 
@@ -58,7 +59,7 @@ Iot-demo-page/
 
 1. On your PC, connect to the IoT access point (**Demo_wifi**)
 
-2. Open a browser and go to:  http://<IP-address-from-Serial-Monitor>
+2. Open a browser and go to:  http://192.168.4.1
 
 
 3. A mini portal will open:
@@ -89,14 +90,33 @@ python3 -m http.server 8000
 
 ### Option 2: Terminal Subscriber
 
-Run the Python MQTT subscriber from the project root:
+Go to the 'subscribers' directory and run one of the following based on your prefered language
 
+#### Python
 ```bash
 python3 MQTT_subscriber.py
 ```
+
+#### C#
+```bash
+dotnet run
+```
+
+#### Node JS
+```bash
+node MQTT_subscriber.js
+```
+
+#### Ruby
+```bash
+ruby MQTT_subscriber.rb
+```
 This will print temperature and humidity readings directly in your terminal.
 
-### Live Demo Use Case
-- Ideal for conference demonstrations.
-- Shows how IoT devices publish sensor data via MQTT → LavinMQ.
-- Provides both web visualization and terminal output.
+### Replace
+
+- <broker-name>
+- <username>
+- <password>
+
+You can find the details in the overview page of your LavinMQ instance
