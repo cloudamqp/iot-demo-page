@@ -25,7 +25,7 @@ const client = mqtt.connect({
   reconnectPeriod: 1000,
 });
 
-// clinet subscription to the topics
+// client subscription to the topics
 client.on("connect", () => {
   console.log("Connected to broker.");
   client.subscribe(

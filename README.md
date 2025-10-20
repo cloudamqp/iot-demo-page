@@ -3,7 +3,7 @@
 This project demonstrates using **LavinMQ** for an IoT live demo at conferences.
 It contains two main parts:
 
-- **`arduino/`** → Arduino sketches (C/C++ code for the IoT device).
+- **`ESP32/`** → Arduino sketches (C/C++ code for the IoT device).
 - **`landingpage/`** → A simple landing page built with Bootstrap, CSS, JavaScript, and HTML.
 
 
@@ -11,7 +11,7 @@ It contains two main parts:
 ##  Project Structure
 
 Iot-demo-page/
-├── arduino/ # Arduino sketches (C/C++ code for IoT device)
+├── ESP32/ # Arduino sketches (C/C++ code for IoT device)
 ├── landingpage/ # Landing page (Bootstrap, CSS, JS, HTML)
 ├── subscribers # MQTT subscribers in different language
 └── README.md # Project documentation
@@ -23,7 +23,7 @@ Iot-demo-page/
 - Ruby
 
 ### Hardware
-- ESP32-c6 microcontroler
+- ESP32-c6 microcontroller
 - DHT temperature & humidity sensor
 - USB-C cable
 - Jumper wires (red = power, black = ground, yellow = data)
@@ -44,7 +44,7 @@ Iot-demo-page/
 
 2. Connect the Arduino to your PC with a **USB-C cable**.
 
-3. Open the **Arduino sketch** from the `arduino/` folder in **Arduino IDE**.
+3. Open the **Arduino sketch** from the `ESP32/` folder in **Arduino IDE**.
    - Make sure to open and upload the **entire sketch folder** (not just a single `.ino` file).
    - Select the correct board from the  **Board** menu.
    - Upload the sketch to the board.
@@ -90,7 +90,7 @@ python3 -m http.server 8000
 
 ### Option 2: Terminal Subscriber
 
-Go to the 'subscribers' directory and run one of the following based on your prefered language
+Go to the 'subscribers' directory and run one of the following based on your preferred language
 
 #### Python
 ```bash
