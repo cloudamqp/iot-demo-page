@@ -1,7 +1,7 @@
 // ============ Device Readings over MQTT (real data only) ============
 
 // WebSocket endpoint for LavinMQ/RabbitMQ MQTT-over-WebSocket
-const MQTT_URL = "wss://campbell.lmq.cloudamqp.com/mqtt";
+const MQTT_URL = "wss://<hostname>/mqtt";
 
 // Topics must match what your device publishes
 const TOPIC_TEMP = "lavinmq/home/temperature";
@@ -9,8 +9,8 @@ const TOPIC_HUM  = "lavinmq/home/humidity";
 
 // IMPORTANT: RabbitMQ/LavinMQ use user@vhost for MQTT auth (not user:vhost)
 const MQTT_OPTIONS = {
-  username: "hxwdqhip:hxwdqhip",                       // <-- FIXED
-  password: "f2n98I_TLfSWjNzp3hEX5e9Sed5y7czW",
+  username: "<username>",
+  password: "<password>",
   clientId: "webclient-" + Math.random().toString(16).slice(2),
   clean: true,
   keepalive: 60,
