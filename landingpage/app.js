@@ -1,7 +1,7 @@
 // ============ Device Readings over MQTT (real data only) ============
 
 // WebSocket endpoint for LavinMQ/RabbitMQ MQTT-over-WebSocket
-const MQTT_URL = "wss://<hostname>:443/ws/mqtt";
+const MQTT_URL = "wss://<hostname>/mqtt";
 const USERNAME = "<username>";
 const PASSWORD = "<password>";
 
