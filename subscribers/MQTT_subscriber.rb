@@ -1,26 +1,31 @@
+# Import Ruby MQTT library
 require 'mqtt'
 require 'securerandom'
 require 'time'
 
-# Broker details
+# MQTT broker connection details (LavinMQ)
 BROKER   = "<broker-name>"
-PORT     = 1883
 USERNAME = "<username>"
 PASSWORD = "<password>"
+PORT     = 1883
 
-# Topics
+# Topic names for sensor data with QoS levels
+# Topics determine how messages are routed through the broker
+# Subscribers can subscribe to exact matches or use wildcards:
+# - 'lavinmq/home/+' would match both temperature and humidity
+# - 'lavinmq/home/#' would match all topics under lavinmq/home/
 TOPICS   = {
-  "lavinmq/home/temperature" => 1,
-  "lavinmq/home/humidity"    => 1
+  "lavinmq/home/temperature" => 1,  # QoS 1 for temperature
+  "lavinmq/home/humidity"    => 1   # QoS 1 for humidity
 }
 
-
-CLIENT_ID     = "terminal-consumer-#{SecureRandom.hex(4)}" # random client Id
+# Generate unique client ID and connection settings
+CLIENT_ID     = "terminal-consumer-#{SecureRandom.hex(4)}"
 KEEPALIVE_SEC = 60
 CLEAN_SESSION = true
 USE_TLS       = (PORT == 8883)
 
-# client connection to broker
+# Connect to broker and listen for sensor data
 def connect_and_stream
   MQTT::Client.connect(
     host:         BROKER,
@@ -35,6 +40,7 @@ def connect_and_stream
     c.subscribe(TOPICS)
     puts "Connected. Subscribed to: #{TOPICS.keys.join(', ')}"
 
+    # Handle incoming sensor messages
     c.get do |topic, message|
       ts = Time.now.utc.iso8601
       puts "[#{ts}] #{topic}: #{message}"
