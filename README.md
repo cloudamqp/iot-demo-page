@@ -53,7 +53,6 @@ Iot-demo-page/
    - Unplug and replug the USB-C cable.
    - The **IP address** of the board will appear.
 
----
 
 ## Step 2: Configure WiFi and MQTT
 
@@ -72,23 +71,12 @@ Iot-demo-page/
 
 👉 WiFi and MQTT credentials are stored on the board, so next time you just need to power it on.
 
----
 
 ## Step 3: Consume the Data
 
 You can consume the messages in two ways:
 
-### Option 1: Web Dashboard
-1. Start a local HTTP server from the `landingpage/` folder:
-```bash
-cd landingpage
-python3 -m http.server 8000
-```
-2. Open a browser and go to: http://localhost:8000/index.html
-
-3. View temperature, humidity, and trend charts in the page
-
-### Option 2: Terminal Subscriber
+### Option 1: Terminal Subscriber
 
 Go to the 'subscribers' directory and run one of the following based on your preferred language. Make sure that you replace the following variables in the files: `<broker-name>` `<username>` `<password>`.
 
@@ -112,3 +100,14 @@ node MQTT_subscriber.js
 ruby MQTT_subscriber.rb
 ```
 This will print temperature and humidity readings directly in your terminal.
+
+
+### Option 2: Web Dashboard
+1. Start a local HTTP server from the `landingpage/` folder:
+```bash
+cd landingpage
+python3 -m http.server 8000
+```
+2. Open a browser and go to: http://localhost:8000/index.html
+
+3. View temperature, humidity, and trend charts in the page
