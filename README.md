@@ -10,11 +10,13 @@ It contains two main parts:
 
 ##  Project Structure
 
+```
 Iot-demo-page/
 ├── ESP32/ # Arduino sketches (C/C++ code for IoT device)
 ├── landingpage/ # Landing page (Bootstrap, CSS, JS, HTML)
-├── subscribers # MQTT subscribers in different language
+├── subscribers/ # MQTT subscribers in different languages
 └── README.md # Project documentation
+```
 
 ### consumers
 - Python
