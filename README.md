@@ -76,11 +76,21 @@ Iot-demo-page/
 
 ## Step 3: Consume the Data
 
-You can consume the messages in two ways:
+You can consume the messages in two ways.
 
 ### Option 1: Terminal Subscriber
 
-Go to the 'subscribers' directory and run one of the following based on your preferred language. Make sure that you replace the following variables in the files: `<broker-name>` `<username>` `<password>`.
+1. Navigate to the `subscribers/` directory
+2. Choose your preferred language and edit the corresponding file:
+   - **JavaScript**: `MQTT_subscriber.js`
+   - **Python**: `MQTT_subscriber.py`
+   - **Ruby**: `MQTT_subscriber.rb`
+   - **C#**: `Program.cs`
+3. Replace the placeholder values with your LavinMQ instance credentials:
+   - `<broker-name>` → Your LavinMQ broker URL
+   - `<username>` → Your LavinMQ username
+   - `<password>` → Your LavinMQ password
+4. Run the appropriate command for your chosen language:
 
 #### Python
 ```bash
