@@ -9,7 +9,7 @@ const TOPIC_HUM  = "lavinmq/home/humidity";
 
 // IMPORTANT: RabbitMQ/LavinMQ use user@vhost for MQTT auth (not user:vhost)
 const MQTT_OPTIONS = {
-  username: "<username>",
+  username: "<user>@<vhost>",
   password: "<password>",
   clientId: "webclient-" + Math.random().toString(16).slice(2),
   clean: true,
