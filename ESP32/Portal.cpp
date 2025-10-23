@@ -4,7 +4,6 @@
 #include "ConfigStore.h"
 
 namespace {
-
   String urlDecode(const String& s) {
     String out; out.reserve(s.length());
     auto hex = [](char x)->int {
@@ -21,7 +20,6 @@ namespace {
     }
     return out;
   }
-
   static String htmlEscape(String s) {
     s.replace("&", "&amp;"); s.replace("<", "&lt;"); s.replace(">", "&gt;"); s.replace("\"", "&quot;");
     return s;
@@ -35,11 +33,11 @@ namespace {
   }
 
   static String indexPage(const Config* cfg = nullptr) {
-    String host = (cfg && cfg->mhost[0]) ? String(cfg->mhost) : "campbell.lmq.cloudamqp.com";
-    String user = (cfg && cfg->muser[0]) ? String(cfg->muser) : "";
+    String host = (cfg && cfg->mhost[0]) ? String(cfg->mhost) : "Enter host name here";
+    String user = (cfg && cfg->muser[0]) ? String(cfg->muser) : "Enter user name here";
     uint16_t port = (cfg && cfg->mport) ? cfg->mport : 1883;
 
-    String html; html.reserve(9000);
+    String html; html.reserve(12000);
     html += F(
       "<!DOCTYPE html><html><head><meta charset=\"utf-8\"/>"
       "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />"
@@ -53,14 +51,20 @@ namespace {
       "color:#e6e6e6}.form-box hr{border:0;border-top:1px dashed #5a5a59;opacity:.6;margin:16px 0}.form-grid{display:grid;"
       "grid-template-columns:1fr 1.5fr;gap:12px 16px;align-items:center}.form-grid input,.form-grid select{width:100%;padding:8px 10px;"
       "background:#2a2a2a;border:1px solid #5a5a59;color:#fff;border-radius:6px;box-sizing:border-box}.actions{display:flex;"
-      "justify-content:flex-end;margin-top:16px;gap:12px;align-items:center}button{background:#54be7f;color:#141414;border:none;"
-      "padding:10px 14px;border-radius:6px;cursor:pointer;font-weight:600}@media(max-width:560px){.form-grid{grid-template-columns:1fr}"
-      ".actions{justify-content:stretch;flex-direction:column;align-items:stretch}.actions button{width:100%}}</style>"
+      "justify-content:flex-end;margin-top:16px;gap:12px;align-items:center;flex-wrap:wrap}"
+      "button{background:#54be7f;color:#141414;border:none;padding:10px 14px;border-radius:6px;cursor:pointer;font-weight:600}"
+      "button.secondary{background:#b85a5a;color:#fff}"
+      ".msg{margin-left:auto;font-size:.95em;opacity:.95;min-height:1.2em}"
+      ".msg.ok{color:#8fe39b}.msg.err{color:#ffb4a3}.muted{opacity:.8}"
+      "@media(max-width:560px){.form-grid{grid-template-columns:1fr}"
+      ".actions{justify-content:stretch;flex-direction:column;align-items:stretch}"
+      ".actions button{width:100%}.msg{margin:8px 0 0 0}}</style>"
       "</head><body>"
       "<div class=\"page-header\"><h2>LavinMQ setup</h2></div>"
       "<div class=\"page-intro\"><p>You're connected to the Beetle ESP32-C6. Configure your LavinMQ instance & Wi-Fi below.</p></div>"
 
-      "<form class=\"form-box\" action=\"/savemqtt\" method=\"GET\"><h1>Step 1: Connect to your LavinMQ instance</h1>"
+      // MQTT form
+      "<form class=\"form-box\" action=\"/savemqtt\" method=\"GET\" id=\"mqttForm\"><h1>Step 1: Connect to your LavinMQ instance</h1>"
       "<hr /><h3>MQTT Connection details</h3><div class=\"form-grid\">"
       "<label for=\"host\">Host:</label><input id=\"host\" type=\"text\" name=\"host\" value=\"");
     html += htmlEscape(host);
@@ -72,65 +76,88 @@ namespace {
     html += htmlEscape(user);
     html += F("\" />"
       "<label for=\"mqttpass\">Password:</label><input id=\"mqttpass\" type=\"password\" name=\"pass\" placeholder=\"leave blank to keep\" />"
-      "</div><div class=\"actions\"><button type=\"submit\">Save MQTT</button></div></form>"
+      "</div><div class=\"actions\">"
+      "<span id=\"mqttMsg\" class=\"msg\"></span>"
+      "<button type=\"submit\">Save MQTT</button>"
+      "<button type=\"button\" id=\"delMqttBtn\" class=\"secondary\">Delete MQTT</button>"
+      "</div></form>"
 
-      "<form class=\"form-box\" action=\"/savewifi\" method=\"GET\"><h1>Step 2: Connect to your Wi-Fi network</h1><hr />"
+      // Wi-Fi form
+      "<form class=\"form-box\" action=\"/savewifi\" method=\"GET\" id=\"wifiForm\"><h1>Step 2: Connect to your Wi-Fi network</h1><hr />"
       "<div class=\"form-grid\">"
       "<label for=\"ssid\">Network (SSID):</label>"
       "<select id=\"ssid\" name=\"ssid\"><option>Scanning…</option></select>"
       "<label for=\"wifipass\">Password:</label><input id=\"wifipass\" type=\"password\" name=\"pass\" />"
       "</div>"
       "<div class=\"actions\">"
-      "<span id=\"scanStatus\" style=\"margin-right:auto;opacity:.85\"></span>"
-      "<button type=\"button\" id=\"refreshBtn\">Refresh list</button>"
+      "<span id=\"scanStatus\" class=\"muted\" style=\"margin-right:auto\"></span>"
+      "<span id=\"wifiMsg\" class=\"msg\"></span>"
       "<button type=\"submit\">Save Wi-Fi</button>"
+      "<button type=\"button\" id=\"delWifiBtn\" class=\"secondary\">Delete Wi-Fi</button>"
       "</div></form>"
-
-      "<form class=\"form-box\" action=\"/deletewifi\" method=\"GET\"><div class=\"actions\"><button>Delete Wi-Fi</button></div></form>"
-      "<form class=\"form-box\" action=\"/deletemqtt\" method=\"GET\"><div class=\"actions\"><button>Delete MQTT</button></div></form>"
-      "<form class=\"form-box\" action=\"/erase\" method=\"GET\"><div class=\"actions\"><button>Erase ALL saved settings</button></div></form>"
-
       "<script>"
       "const ssidSel=document.getElementById('ssid');"
       "const scanStatus=document.getElementById('scanStatus');"
-      "const refreshBtn=document.getElementById('refreshBtn');"
+      "const mqttForm=document.getElementById('mqttForm');"
+      "const wifiForm=document.getElementById('wifiForm');"
+      "const delMqttBtn=document.getElementById('delMqttBtn');"
+      "const delWifiBtn=document.getElementById('delWifiBtn');"
+      "const mqttMsg=document.getElementById('mqttMsg');"
+      "const wifiMsg=document.getElementById('wifiMsg');"
 
+      "function setMsg(el, ok, text){el.className='msg ' + (ok?'ok':'err'); el.textContent=text;}"
+
+      // Wi-Fi scan
       "async function startScan(){"
       "  try{await fetch('/scan?start=1');}catch(e){}"
       "  scanStatus.textContent='Scanning…';"
       "  ssidSel.innerHTML='<option>Scanning…</option>';"
       "  pollScan();"
       "}"
-
       "async function pollScan(){"
       "  for(;;){"
       "    let r=await fetch('/scan');"
       "    let j=await r.json().catch(()=>({status:'error'}));"
-      "    if(j.status==='started'||j.status==='scanning'){"
-      "      await new Promise(res=>setTimeout(res,800));"
-      "      continue;"
-      "    }"
-      "    if(j.status!=='done'){"
-      "      scanStatus.textContent='Scan error';"
-      "      return;"
-      "    }"
+      "    if(j.status==='started'||j.status==='scanning'){await new Promise(res=>setTimeout(res,800));continue;}"
+      "    if(j.status!=='done'){scanStatus.textContent='Scan error';return;}"
       "    const list=(j.networks||[]).filter(n=>n.ssid&&n.ssid.length>0);"
       "    if(!list.length){scanStatus.textContent='No networks found'; ssidSel.innerHTML='<option>(none)</option>'; return;}"
       "    list.sort((a,b)=>b.rssi-a.rssi);"
       "    ssidSel.innerHTML='';"
-      "    for(const ap of list){"
-      "      const o=document.createElement('option');"
-      "      o.value=ap.ssid;"
-      "      o.textContent=`${ap.ssid} (${ap.rssi} dBm) ${ap.secure?'🔒':''}`;"
-      "      ssidSel.appendChild(o);"
-      "    }"
+      "    for(const ap of list){const o=document.createElement('option');o.value=ap.ssid;o.textContent=`${ap.ssid} (${ap.rssi} dBm) ${ap.secure?'🔒':''}`;ssidSel.appendChild(o);}"
       "    scanStatus.textContent='';"
       "    return;"
       "  }"
       "}"
 
+      "async function submitAjax(form, msgEl, okText){"
+      "  const params=new URLSearchParams(new FormData(form));"
+      "  params.append('ajax','1');"
+      "  setMsg(msgEl,true,'Working…');"
+      "  try{"
+      "    const res=await fetch(form.action+'?'+params.toString());"
+      "    const ct=res.headers.get('Content-Type')||'';"
+      "    if(ct.includes('application/json')){const j=await res.json(); setMsg(msgEl, j.ok!==false, j.message || (res.ok?okText:'Request failed'));}"
+      "    else{setMsg(msgEl, res.ok, res.ok?okText:'Request failed');}"
+      "  }catch(e){setMsg(msgEl,false,'Connection error');}"
+      "}"
+
+      "mqttForm.addEventListener('submit',async(e)=>{e.preventDefault();await submitAjax(mqttForm,mqttMsg,'MQTT settings saved.');});"
+      "wifiForm.addEventListener('submit',async(e)=>{e.preventDefault();await submitAjax(wifiForm,wifiMsg,'Wi-Fi saved. Connecting…');});"
+
+      // Delete actions (AJAX)
+      "delMqttBtn.addEventListener('click',async()=>{"
+      "  setMsg(mqttMsg,true,'Deleting MQTT…');"
+      "  try{const r=await fetch('/deletemqtt?ajax=1'); const j=await r.json().catch(()=>({ok:r.ok})); setMsg(mqttMsg,j.ok!==false,(j.message||'MQTT settings deleted.'));}"
+      "  catch(e){setMsg(mqttMsg,false,'Connection error');}"
+      "});"
+      "delWifiBtn.addEventListener('click',async()=>{"
+      "  setMsg(wifiMsg,true,'Deleting Wi-Fi…');"
+      "  try{const r=await fetch('/deletewifi?ajax=1'); const j=await r.json().catch(()=>({ok:r.ok})); setMsg(wifiMsg,j.ok!==false,(j.message||'Wi-Fi settings deleted.'));}"
+      "  catch(e){setMsg(wifiMsg,false,'Connection error');}"
+      "});"
+
       "document.addEventListener('DOMContentLoaded',()=>{startScan();});"
-      "refreshBtn.addEventListener('click',()=>startScan());"
       "</script>"
 
       "</body></html>"
@@ -147,8 +174,8 @@ namespace Portal {
 
   void startAPPortalWindow() {
     if (!portalRunning) {
-      WiFi.mode(WIFI_AP_STA);                 // AP + STA so we can scan while AP is up
-      bool ok = WiFi.softAP(AP_SSID);         // open AP; add a password if you prefer
+      WiFi.mode(WIFI_AP_STA);                 
+      bool ok = WiFi.softAP(AP_SSID);         
       Serial.printf("[PORTAL] SoftAP '%s' %s\n", AP_SSID, ok ? "started" : "FAILED");
       if (!ok) { delay(800); ok = WiFi.softAP(AP_SSID); Serial.println(ok ? "[PORTAL] Retry OK" : "[PORTAL] Retry FAILED"); }
       web.begin();
@@ -247,7 +274,7 @@ namespace Portal {
       bool first = true;
       for (int i = 0; i < n; i++) {
         String ssid = WiFi.SSID(i);
-        if (!ssid.length()) continue; // skip hidden/empty
+        if (!ssid.length()) continue; 
         long rssi = WiFi.RSSI(i);
         int enc = WiFi.encryptionType(i); // 0=open
         if (!first) body += ',';
@@ -264,11 +291,17 @@ namespace Portal {
     if (route == "/savewifi") {
       String ssid = getParam("ssid"); ssid.trim();
       String pass = getParam("pass"); pass.trim();
+      String ajax = getParam("ajax");
       if (ssid.length() == 0) return send400("Missing SSID");
       ConfigStore::saveWifiOnly(ssid.c_str(), pass.c_str(), &cfgCache);
-      send200(F("<!doctype html><html><body><h3>Wi-Fi saved. Connecting…</h3></body></html>"));
-      stopAP(); // allow STA to connect immediately
-      return;
+
+      if (ajax.length()) {
+        return sendJSON(F("{\"ok\":true,\"message\":\"Wi-Fi saved. Connecting…\"}"));
+      } else {
+        send200(F("<!doctype html><html><body><h3>Wi-Fi saved. Connecting…</h3></body></html>"));
+        stopAP(); // allow STA to connect immediately
+        return;
+      }
     }
 
     // ---- Save MQTT ----
@@ -277,31 +310,36 @@ namespace Portal {
       String port = getParam("port"); port.trim();
       String user = getParam("user"); user.trim();
       String pass = getParam("pass"); pass.trim();
+      String ajax = getParam("ajax");
       if (host.length() == 0) return send400("Missing host");
       uint16_t p = (uint16_t)(port.length() ? port.toInt() : (cfgCache.mport ? cfgCache.mport : 1883));
       ConfigStore::saveMqttOnly(host.c_str(), p, (user.length()?user.c_str():""), (pass.length()?pass.c_str():nullptr), &cfgCache);
-      String body = String(F("<!doctype html><html><body><h3>MQTT saved.</h3><p>Broker: "))
-                  + htmlEscape(host) + ":" + String(p) + F("</p></body></html>");
-      send200(body);
-      return;
+
+      if (ajax.length()) {
+        String body = String("{\"ok\":true,\"message\":\"MQTT saved.\",\"broker\":\"") + jsonEscape(host) + "\",\"port\":" + String(p) + "}";
+        return sendJSON(body);
+      } else {
+        String body = String(F("<!doctype html><html><body><h3>MQTT saved.</h3><p>Broker: "))
+                    + htmlEscape(host) + ":" + String(p) + F("</p></body></html>");
+        send200(body);
+        return;
+      }
     }
 
     // ---- Maintenance ----
     if (route == "/deletewifi") {
+      String ajax = getParam("ajax");
       ConfigStore::clearWifi();
+      if (ajax.length()) return sendJSON(F("{\"ok\":true,\"message\":\"Wi-Fi settings deleted.\"}"));
       send200(F("<!doctype html><html><body><h3>Wi-Fi settings deleted.</h3></body></html>"));
       return;
     }
 
     if (route == "/deletemqtt") {
+      String ajax = getParam("ajax");
       ConfigStore::clearMqtt();
+      if (ajax.length()) return sendJSON(F("{\"ok\":true,\"message\":\"MQTT settings deleted.\"}"));
       send200(F("<!doctype html><html><body><h3>MQTT settings deleted.</h3></body></html>"));
-      return;
-    }
-
-    if (route == "/erase") {
-      ConfigStore::clearAll();
-      send200(F("<!doctype html><html><body><h3>All settings erased.</h3></body></html>"));
       return;
     }
 
