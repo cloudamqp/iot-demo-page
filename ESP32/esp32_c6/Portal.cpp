@@ -296,7 +296,7 @@ namespace Portal {
       ConfigStore::saveWifiOnly(ssid.c_str(), pass.c_str(), &cfgCache);
 
       if (ajax.length()) {
-        return sendJSON(F("{\"ok\":true,\"message\":\"Wi-Fi saved. Connecting…\"}"));
+        return sendJSON(F("{\"ok\":true,\"message\":\"Wi-Fi saved!\"}"));
       } else {
         send200(F("<!doctype html><html><body><h3>Wi-Fi saved. Connecting…</h3></body></html>"));
         stopAP(); // allow STA to connect immediately

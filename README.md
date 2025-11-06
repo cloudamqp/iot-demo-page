@@ -64,8 +64,12 @@ Iot-demo-page/
 
 
 3. A mini portal will open:
-- First, enter and save **MQTT details** (create a LavinMQ instance on [CloudAMQP](https://www.cloudamqp.com/)).
-- Then go back, enter and save your **WiFi details**.
+
+- Enter your MQTT details
+   - If your LavinMQ instance is hosted on AWS, you can use port 1883 or 8883.
+   - If your instance is on Google Cloud, Azure, or Scaleway, use port 8883 only.
+Press Save.
+Enter your Wi-Fi credentials and press Save.
 
 4. Close the portal and wait **1 minute** for the IoT device to connect to your WiFi.
 - Once connected, `Demo_wifi` will disappear from available networks.

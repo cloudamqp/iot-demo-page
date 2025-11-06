@@ -6,10 +6,6 @@
 #include "Portal.h"
 #include "WiFiMgr.h"
 #include "MqttMgr.h"
-
-// Lock I2C to the Beetle ESP32-C6 main I²C bus:
-#define AHT20_SDA_PIN 19
-#define AHT20_SCL_PIN 20
 #include "DhtSensor.h"
 
 // MQTT topics
@@ -18,7 +14,7 @@
 #define TOPIC_HUM  TOPIC_BASE "/humidity"
 
 static unsigned long lastRead   = 0;
-static const unsigned long READ_INTERVAL_MS = 1000; // 1s
+static const unsigned long READ_INTERVAL_MS = 2000; 
 static unsigned long lastTestPub = 0;
 
 void setup() {
@@ -34,7 +30,7 @@ void setup() {
   ConfigStore::begin();
   WiFi.persistent(false);
 
-  Serial.println(F("[SENSOR] Init AHT20/DHT20…"));
+  Serial.println(F("[SENSOR] Init DHT11…"));
   DhtSensor::begin();
 
   Serial.println(F("[PORTAL] Opening SoftAP config window…"));
@@ -48,7 +44,7 @@ void loop() {
     return; // portal has priority
   }
 
-  // After portal closes, connect to stored Wi-Fi (non-blocking-ish)
+  // After portal closes, connect to stored Wi-Fi
   WiFiMgr::ensureWifiFromStored();
 
   if (WiFi.status() == WL_CONNECTED) {
@@ -58,7 +54,8 @@ void loop() {
       Serial.print("[WiFi] Connected. IP: ");
       Serial.println(WiFi.localIP());
     }
-    // Only try MQTT once Wi-Fi is up
+
+    // MQTT
     MqttMgr::ensureConnected();
     MqttMgr::loop();
 
@@ -70,15 +67,15 @@ void loop() {
       MqttMgr::publish(TOPIC_BASE "/heartbeat", hb, false);
     }
 
-    // Sensor read/publish every second
+    // Sensor read/publish 
     unsigned long now = millis();
     if (now - lastRead >= READ_INTERVAL_MS) {
       lastRead = now;
 
       float t, h;
       if (!DhtSensor::read(t, h)) {
-        MqttMgr::publish(TOPIC_BASE "/sensor_error", "AHT20 read failed", false);
-        Serial.println("[AHT20] read failed");
+        MqttMgr::publish(TOPIC_BASE "/sensor_error", "DHT read failed", false);
+        Serial.println("[DHT] read failed");
       } else {
         Serial.print(F("[SENSOR] T=")); Serial.print(t, 1);
         Serial.print(F(" °C  H=")); Serial.print(h, 1); Serial.println(F(" %"));
