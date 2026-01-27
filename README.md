@@ -44,8 +44,11 @@ iot-demo-page/
 
 2. Connect the Arduino to your PC with a **USB-C cable**.
 
-3. Open the **Arduino sketch** from the `ESP32/` folder in **Arduino IDE**.
+3. Open the **Arduino sketch** from the `esp32_c6/` folder in **Arduino IDE**.
    - Make sure to open and upload the **entire sketch folder** (not just a single `.ino` file).
+   - Ensure you have the following libraries installed:
+      - DHT sensor library by Adafruit
+      - PubSubClient by Nick O'Leary
    - Select the correct board from the **Board** menu.
    - Upload the sketch to the board.
 
