@@ -61,10 +61,7 @@ iot-demo-page/
 
 3. A mini portal will open:
 
-- Enter your MQTT details:
-   - If your LavinMQ instance is hosted on AWS, you can use port 1883 or 8883.
-   - If your instance is on Google Cloud, Azure, or Scaleway, use port 8883 only.
-- Press Save.
+- Enter your MQTT details and press Save.
 - Enter your Wi-Fi credentials and press Save.
 
 4. Close the portal and wait **1 minute** for the IoT device to connect to your Wi-Fi.
