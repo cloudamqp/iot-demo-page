@@ -58,7 +58,7 @@ iot-demo-page/
 
 ## Step 2: Configure Wi-Fi and MQTT
 
-1. On your PC, connect to the IoT access point (**Demo_wifi**).
+1. On your PC, connect to the IoT access point (`demowifi-<deviceid>`).
 
 2. Open a browser and go to: http://192.168.4.1
 
@@ -68,7 +68,7 @@ iot-demo-page/
 - Enter your Wi-Fi credentials and press Save.
 
 4. Close the portal and wait **1 minute** for the IoT device to connect to your Wi-Fi.
-- Once connected, `Demo_wifi` will disappear from available networks.
+- Once connected, `demowifi-<deviceid>` will disappear from available networks.
 - The device will start publishing sensor data to LavinMQ.
 
 👉 Wi-Fi and MQTT credentials are stored on the board, so next time you just need to power it on.
