@@ -2,9 +2,9 @@
 import paho.mqtt.client as mqtt
 
 # MQTT broker connection details (LavinMQ)
-BROKER = "<broker-name>"
-USERNAME = "<username>"
-PASSWORD = "<password>"
+BROKER = "kebnekaise.lmq.cloudamqp.com"
+USERNAME = "hmmwreqk:hmmwreqk"
+PASSWORD = "9VHJFomI9iAxT8LH80X269iW0y4QWHXs"
 PORT = 1883
 
 # Topic names for sensor data

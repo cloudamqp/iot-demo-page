@@ -2,9 +2,9 @@
 #include <Arduino.h>
 
 namespace Portal {
-  static const char* AP_SSID = "Demo_wifi";
-  static const unsigned long AP_WINDOW_MS = 60000UL; // 5 minutes
-  static const unsigned long AP_EXTEND_MS = 180000UL; // +3 minutes per visit
+  const char* apSsid();
+  static const unsigned long AP_WINDOW_MS = 60000UL; 
+  static const unsigned long AP_EXTEND_MS = 180000UL; 
 
   void startAPPortalWindow();
   void stopAP();

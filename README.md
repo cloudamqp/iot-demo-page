@@ -3,7 +3,7 @@
 This project demonstrates using **LavinMQ** for an IoT live demo at conferences.
 It contains two main parts:
 
-- **`ESP32/`** → Arduino sketches (C/C++ code for the IoT device).
+- **`esp32_c6/`** → Arduino sketches  (C/C++ code for the IoT device). needs to be uploaded to the esp32 microcontroller
 - **`landingpage/`** → A simple landing page built with Bootstrap, CSS, JavaScript, and HTML.
 
 

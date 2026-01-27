@@ -32,6 +32,19 @@ namespace {
     return s;
   }
 
+  String deviceIdShort() {
+    uint8_t mac[6];
+    WiFi.macAddress(mac);
+
+    char id[7];
+    snprintf(id, sizeof(id), "%02X%02X%02X", mac[3], mac[4], mac[5]);
+    return String(id);
+  }
+
+  String makeApSsid() {
+    return String("demowifi-") + deviceIdShort();
+  }
+
   static String indexPage(const Config* cfg = nullptr) {
     String host = (cfg && cfg->mhost[0]) ? String(cfg->mhost) : "Enter host name here";
     String user = (cfg && cfg->muser[0]) ? String(cfg->muser) : "Enter user name here";
@@ -175,9 +188,12 @@ namespace Portal {
   void startAPPortalWindow() {
     if (!portalRunning) {
       WiFi.mode(WIFI_AP_STA);                 
-      bool ok = WiFi.softAP(AP_SSID);         
-      Serial.printf("[PORTAL] SoftAP '%s' %s\n", AP_SSID, ok ? "started" : "FAILED");
-      if (!ok) { delay(800); ok = WiFi.softAP(AP_SSID); Serial.println(ok ? "[PORTAL] Retry OK" : "[PORTAL] Retry FAILED"); }
+      const char* ssid = Portal::apSsid();        
+      bool ok = WiFi.softAP(ssid);
+      Serial.printf("[PORTAL] SoftAP '%s' %s\n", ssid, ok ? "started" : "FAILED");
+      if (!ok) { delay(800); ok = WiFi.softAP(ssid); Serial.println(ok ? "[PORTAL] Retry OK" : "[PORTAL] Retry FAILED"); }
+      Serial.printf("[STICKER] SSID: %s\n", ssid);
+      Serial.printf("[STICKER] ID: %s\n", deviceIdShort().c_str());
       web.begin();
       portalRunning = true;
     }
@@ -186,6 +202,13 @@ namespace Portal {
     Serial.print("[PORTAL] Visit http://"); Serial.println(ip);
     Serial.println("[PORTAL] Tip: Save Wi-Fi to stop AP and join your network.");
   }
+
+  const char* apSsid() {
+    static String ssid;
+    if (!ssid.length()) ssid = makeApSsid();
+    return ssid.c_str();
+  }
+
 
   void stopAP() {
     if (portalRunning) {
