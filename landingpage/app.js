@@ -1,9 +1,9 @@
 // ============ Device Readings over MQTT (real data only) ============
 
 // WebSocket endpoint for LavinMQ/RabbitMQ MQTT-over-WebSocket
-const MQTT_URL = "wss://kebnekaise.lmq.cloudamqp.com/mqtt";
-const USERNAME = "hmmwreqk:hmmwreqk";
-const PASSWORD = "9VHJFomI9iAxT8LH80X269iW0y4QWHXs";
+const MQTT_URL = "wss:/mqtt";
+const USERNAME = "";
+const PASSWORD = "";
 
 // Topics must match what your device publishes
 const TOPIC_TEMP = "lavinmq/home/temperature";
